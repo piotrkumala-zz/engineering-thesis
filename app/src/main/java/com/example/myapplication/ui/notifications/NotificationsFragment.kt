@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.notifications
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,9 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.style.expressions.Expression.get
+import com.mapbox.mapboxsdk.style.layers.FillExtrusionLayer
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import java.net.URI
 import java.net.URISyntaxException
@@ -53,14 +57,14 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
                 )
                 style.addSource(courseRouteGeoJson)
 
-                // Add FillExtrusion layer to map using GeoJSON data
-                //                    style.addLayer(
-                //                        FillExtrusionLayer("course", "coursedata").withProperties(
-                //                            fillExtrusionColor(Color.YELLOW),
-                //                            fillExtrusionOpacity(0.7f),
-                //                            fillExtrusionHeight(get("e"))
-                //                        )
-                //                    )
+//                 Add FillExtrusion layer to map using GeoJSON data
+                style.addLayer(
+                    FillExtrusionLayer("course", "coursedata").withProperties(
+                        fillExtrusionColor(Color.YELLOW),
+                        fillExtrusionOpacity(0.7f),
+                        fillExtrusionHeight(get("e"))
+                    )
+                )
             } catch (exception: URISyntaxException) {
 
             }
