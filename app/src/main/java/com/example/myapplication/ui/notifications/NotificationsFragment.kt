@@ -4,54 +4,101 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.R
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
+import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import java.net.URI
+import java.net.URISyntaxException
 
-class NotificationsFragment : Fragment() {
 
-    private val callback = OnMapReadyCallback { googleMap ->
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-    }
+class NotificationsFragment : Fragment(), OnMapReadyCallback {
+
+    private var mapView: MapView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+
+        context?.let {
+            Mapbox.getInstance(
+                it.applicationContext,
+                "sk.eyJ1IjoicGt1bWFsYSIsImEiOiJja2lxcXJ6Z2IxemR4MzFxajF2bnR4b3lhIn0.qQn49nZHf9mpumWKM9CqqQ"
+            )
+        }
+
+// This contains the MapView in XML and needs to be called after the access token is configured.
+        val root = inflater.inflate(R.layout.fragment_notifications, container, false)
+        mapView = root.findViewById(R.id.mapView)
+        mapView?.onCreate(savedInstanceState)
+        mapView?.getMapAsync(this)
+
+        return root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+    override fun onMapReady(mapboxMap: MapboxMap) {
+        mapboxMap.setStyle(Style.SATELLITE) { style ->
+            try {
+                // Add the marathon route source to the map
+                // Create a GeoJsonSource and use the Mapbox Datasets API to retrieve the GeoJSON data
+                // More info about the Datasets API at https://www.mapbox.com/api-documentation/#retrieve-a-dataset
+                val courseRouteGeoJson = GeoJsonSource(
+                    "coursedata", URI("asset://marathon_route.geojson")
+                )
+                style.addSource(courseRouteGeoJson)
+
+                // Add FillExtrusion layer to map using GeoJSON data
+                //                    style.addLayer(
+                //                        FillExtrusionLayer("course", "coursedata").withProperties(
+                //                            fillExtrusionColor(Color.YELLOW),
+                //                            fillExtrusionOpacity(0.7f),
+                //                            fillExtrusionHeight(get("e"))
+                //                        )
+                //                    )
+            } catch (exception: URISyntaxException) {
+
+            }
+        }
     }
+
+    override fun onStart() {
+        super.onStart()
+        mapView?.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView?.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView?.onStop()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView?.onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView?.onDestroy()
+    }
+
+//    protected fun onSaveInstanceState(outState: Bundle?) {
+//        super.onSaveInstanceState(outState!!)
+//        mapView.onSaveInstanceState(outState)
+//    }
 }

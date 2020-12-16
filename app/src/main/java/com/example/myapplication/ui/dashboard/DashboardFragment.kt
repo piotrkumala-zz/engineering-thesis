@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
-import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LegendEntry
 import com.github.mikephil.charting.components.XAxis
@@ -16,7 +15,6 @@ import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class DashboardFragment : Fragment() {
@@ -34,13 +32,13 @@ class DashboardFragment : Fragment() {
         entries.add(Entry(2f, 2f))
         entries.add(Entry(3f, 7f))
 
-        val entries1 = ArrayList<Entry>()
-        entries.add(Entry(3.5f, 0f));
+        ArrayList<Entry>()
+        entries.add(Entry(3.5f, 0f))
         entries.add(Entry(4f, 20f))
         entries.add(Entry(5f, 16f))
 
         var newEntries = ArrayList<Entry>()
-        GlobalScope.launch(Dispatchers.IO){
+        GlobalScope.launch(Dispatchers.IO) {
             newEntries = prepareEntires(entries)
         }
 
@@ -88,14 +86,14 @@ class DashboardFragment : Fragment() {
         lineChart.setNoDataText("No forex yet!")
 
 //Part10
-        lineChart.animateX(1800, Easing.EaseInExpo)
+
 
 //Part11
         return root
 
     }
 
-    private suspend fun prepareEntires(entries : ArrayList<Entry>): ArrayList<Entry> {
+    private fun prepareEntires(entries: ArrayList<Entry>): ArrayList<Entry> {
         return entries
     }
 
