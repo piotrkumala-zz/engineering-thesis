@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Data Explorer</string>
+    <string name="title_home">Strona główna</string>
+    <string name="title_dashboard">Wykresy</string>
+    <string name="title_notifications">Mapa</string>
+    <string name="home_text">Witamy na stronie głównej. Dobrze Cię widzieć!</string>
+</resources>
