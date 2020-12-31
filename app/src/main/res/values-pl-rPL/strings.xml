@@ -9,4 +9,5 @@
     <string name="user">Nazwa użytkownika:</string>
     <string name="password">Hasło:</string>
     <string name="dev_id">dev_id:</string>
+    <string name="measurement_date">Data pomiaru:</string>
 </resources>
