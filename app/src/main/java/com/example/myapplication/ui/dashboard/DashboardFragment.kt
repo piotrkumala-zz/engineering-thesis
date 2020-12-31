@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.myapplication.MainActivity
 import com.example.myapplication.R
+import com.example.myapplication.shared.ConnectionConfig
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LegendEntry
 import com.github.mikephil.charting.components.XAxis
@@ -32,6 +34,7 @@ class DashboardFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+        val connectionConfig: ConnectionConfig = (activity as MainActivity).connectionConfig
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val lineChart: LineChart = root.findViewById(R.id.lineChart)
 
