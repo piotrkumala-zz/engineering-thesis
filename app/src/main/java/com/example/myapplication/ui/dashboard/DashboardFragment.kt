@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import com.example.myapplication.MainActivity
 import com.example.myapplication.R
+import com.example.myapplication.api.MarsApi
 import com.example.myapplication.shared.ConnectionConfig
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LegendEntry
@@ -20,9 +22,26 @@ import com.github.mikephil.charting.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class DashboardFragment : Fragment() {
+
+    private val _response = MutableLiveData<String>()
+    private fun getMarsRealEstateProperties() {
+        MarsApi.retrofitService.getProperties().enqueue(
+            object : Callback<String> {
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    _response.value = response.body()
+                }
+
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    _response.value = "Failure" + t.message
+                }
+            })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +49,13 @@ class DashboardFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val connectionConfig: ConnectionConfig = (activity as MainActivity).connectionConfig
+        getMarsRealEstateProperties()
+
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val lineChart: LineChart = root.findViewById(R.id.lineChart)
 
