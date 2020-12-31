@@ -35,28 +35,9 @@ class HomeFragment : Fragment() {
         val devId: EditText = root.findViewById(R.id.dev_id)
         val selectDate: EditText = root.findViewById(R.id.select_date)
         selectDate.inputType = InputType.TYPE_NULL
+
         selectDate.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-            val month = calendar.get(Calendar.MONTH)
-            val year = calendar.get(Calendar.YEAR)
-
-            val picker = DatePickerDialog(requireContext(), { _, newYear, monthOfYear, dayOfMonth ->
-                run {
-                    selectDate.text = editable.newEditable("$newYear-$monthOfYear-$dayOfMonth")
-                    val timePicker = TimePickerDialog(requireContext(), { _: TimePicker, hourOfDay: Int, minuteOfHour: Int ->
-                        run {
-                            val tmpText = selectDate.text
-                            val utcFriendlyHour = if (hourOfDay < 10) "0$hourOfDay" else hourOfDay.toString()
-                            val utcFriendlyMinutes = if (minuteOfHour < 10) "0$minuteOfHour" else minuteOfHour.toString()
-                            selectDate.text = editable.newEditable("$tmpText $utcFriendlyHour:$utcFriendlyMinutes:00")
-                        }
-                    }, 0, 0, true)
-                    timePicker.show()
-                }
-
-            }, year, month, day)
-            picker.show()
+            setupPickerDialogs(selectDate, editable)
         }
 
 
@@ -70,5 +51,32 @@ class HomeFragment : Fragment() {
         mainActivity.connectionConfig = ConnectionConfig(serverText.text.toString(), user.text.toString(), password.text.toString(), devId.text.toString().toInt())
 
         return root
+    }
+
+    private fun setupPickerDialogs(
+            selectDate: EditText,
+            editable: Editable.Factory
+    ) {
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val year = calendar.get(Calendar.YEAR)
+
+        val picker = DatePickerDialog(requireContext(), { _, newYear, monthOfYear, dayOfMonth ->
+            run {
+                selectDate.text = editable.newEditable("$newYear-$monthOfYear-$dayOfMonth")
+                val timePicker = TimePickerDialog(requireContext(), { _: TimePicker, hourOfDay: Int, minuteOfHour: Int ->
+                    run {
+                        val tmpText = selectDate.text
+                        val utcFriendlyHour = if (hourOfDay < 10) "0$hourOfDay" else hourOfDay.toString()
+                        val utcFriendlyMinutes = if (minuteOfHour < 10) "0$minuteOfHour" else minuteOfHour.toString()
+                        selectDate.text = editable.newEditable("$tmpText $utcFriendlyHour:$utcFriendlyMinutes:00")
+                    }
+                }, 0, 0, true)
+                timePicker.show()
+            }
+
+        }, year, month, day)
+        picker.show()
     }
 }
