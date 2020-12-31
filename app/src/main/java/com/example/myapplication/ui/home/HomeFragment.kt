@@ -48,7 +48,7 @@ class HomeFragment : Fragment() {
         devId.text = editable.newEditable("13")
 
         val mainActivity: MainActivity = activity as MainActivity
-        mainActivity.connectionConfig = ConnectionConfig(serverText.text.toString(), user.text.toString(), password.text.toString(), devId.text.toString().toInt())
+        mainActivity.connectionConfig = ConnectionConfig(serverText.text.toString(), user.text.toString(), password.text.toString(), devId.text.toString().toInt(), selectDate.text.toString())
 
         return root
     }
