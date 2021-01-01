@@ -30,7 +30,11 @@ class HomeFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         mainActivity = activity as MainActivity
+        initControls(root)
+        return root
+    }
 
+    private fun initControls(root: View) {
         controls = HomeControls(
             root.findViewById(R.id.text_home),
             root.findViewById(R.id.server_name),
@@ -39,13 +43,11 @@ class HomeFragment : Fragment() {
             root.findViewById(R.id.dev_id),
             root.findViewById(R.id.select_date),
         )
-        controls.selectDate.inputType = InputType.TYPE_NULL
 
+        controls.selectDate.inputType = InputType.TYPE_NULL
         controls.selectDate.setOnClickListener {
             setupPickerDialogs(controls.selectDate, editable)
         }
-
-
         controls.textView.text = getString(R.string.home_text)
         controls.serverText.text =
             editable.newEditable("http://rainbow.fis.agh.edu.pl/meteo/connection.php")
@@ -60,10 +62,6 @@ class HomeFragment : Fragment() {
         controls.password.addTextChangedListener(afterTextChanged = changeListener())
         controls.devId.addTextChangedListener(afterTextChanged = changeListener())
         controls.selectDate.addTextChangedListener(afterTextChanged = changeListener())
-
-
-
-        return root
     }
 
 
