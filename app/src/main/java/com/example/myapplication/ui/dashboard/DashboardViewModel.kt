@@ -28,7 +28,7 @@ class DashboardViewModel : ViewModel() {
                 )
                 data.value = listResult
             } catch (e: Exception) {
-                Log.d("Failure", e.message.toString())
+                Log.e("Failure", e.message.toString())
             }
         }
         return data.value!!
