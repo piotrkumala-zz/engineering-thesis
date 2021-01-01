@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 
 class DashboardFragment : Fragment() {
@@ -73,8 +74,8 @@ class DashboardFragment : Fragment() {
         GlobalScope.launch(Dispatchers.IO) {
             val newEntries = prepareEntires(connectionConfig)
 
-            val chartConfig = mainActivity.chartConfig
-            val lineDataSets: Vector<LineDataSet> = getLineSets(newEntries)
+            val chartConfig = mainActivity.chartConfig.value!!
+            val lineDataSets: Vector<LineDataSet> = getLineSets(newEntries, chartConfig)
 //            val vl = LineDataSet(newEntries, "My Type")
 
             val legendEntries = ArrayList<LegendEntry>()
@@ -122,11 +123,21 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun getLineSets(newEntries: ArrayList<Entry>): Vector<LineDataSet> {
+    private fun getLineSets(newEntries: ArrayList<Entry>, chartConfig: ChartConfig): Vector<LineDataSet> {
         val sets = Vector<LineDataSet>(1)
-        sets.addElement(LineDataSet(newEntries, "My Type"))
-//        sets.addElement(LineDataSet(newEntries.subList(0, 2), "My Type"))
-//        sets.addElement(LineDataSet(newEntries.subList(3, 4), "My Type"))
+        var lastCutIndex = 0
+        newEntries.forEachIndexed { index, entry ->
+            run {
+                if (index + 1 < newEntries.size) {
+                    if (abs(entry.x - newEntries[index + 1].x) > 1000 * chartConfig.TimeInterval) {
+                        sets.add(LineDataSet(newEntries.subList(lastCutIndex, index + 1), "My Type"))
+                        lastCutIndex = index + 1
+                    }
+                } else {
+                    sets.add(LineDataSet(newEntries.subList(lastCutIndex, newEntries.size), "My Type"))
+                }
+            }
+        }
 
         return sets
     }
@@ -169,9 +180,12 @@ class DashboardFragment : Fragment() {
 
     private fun changeListener() = { _: Editable? ->
 
-        mainActivity.chartConfig.value = ChartConfig(
-                controls.interval.text.toString().toInt()
-        )
+        if (!controls.interval.text.isNullOrBlank())
+            mainActivity.chartConfig.value = ChartConfig(
+                    controls.interval.text.toString().toInt()
+            )
+        else
+            mainActivity.chartConfig.value = ChartConfig(0)
     }
 
 }
