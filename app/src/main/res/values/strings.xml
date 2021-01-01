@@ -10,4 +10,5 @@
     <string name="dev_id">dev_id:</string>
     <string name="measurement_date">Measurement date:</string>
     <string name="interval_input_hint">Time interval to estimate data gaps (sec):</string>
+    <string name="spinner_hint">Value displayed on the chart:</string>
 </resources>

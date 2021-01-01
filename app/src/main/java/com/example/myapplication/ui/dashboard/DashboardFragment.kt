@@ -7,6 +7,8 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -55,7 +57,19 @@ class DashboardFragment : Fragment() {
         val chartConfig: ChartConfig = mainActivity.chartConfig.value!!
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         initControls(root, chartConfig)
+        val spinner: Spinner = root.findViewById(R.id.spinner)
 
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.measure_variable_array,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            spinner.adapter = adapter
+        }
         renderChart(connectionConfig, controls.lineChart)
         return root
     }
