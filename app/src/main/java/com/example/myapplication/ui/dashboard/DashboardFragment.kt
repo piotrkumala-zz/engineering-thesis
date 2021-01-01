@@ -59,12 +59,12 @@ class DashboardFragment : Fragment() {
 
 
             vl.setDrawValues(true)
-            vl.setDrawFilled(true)
+//            vl.setDrawFilled(true)
             vl.lineWidth = 2f
 
 
 
-            lineChart.xAxis.labelRotationAngle = 30f
+            lineChart.xAxis.labelRotationAngle = 90f
             lineChart.data = LineData(vl)
             lineChart.legend.setCustom(legendEntries)
 
