@@ -9,53 +9,78 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.TimePicker
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.shared.ConnectionConfig
-import com.google.android.material.textfield.TextInputEditText
+import com.example.myapplication.shared.HomeControls
 import java.util.*
 
 class HomeFragment : Fragment() {
+    private lateinit var controls: HomeControls
+    private lateinit var mainActivity: MainActivity
+    private val editable: Editable.Factory = Editable.Factory.getInstance()
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val editable = Editable.Factory.getInstance()
+        mainActivity = activity as MainActivity
 
-        val textView: TextView = root.findViewById(R.id.text_home)
-        val serverText: TextInputEditText = root.findViewById(R.id.server_name)
-        val user: TextInputEditText = root.findViewById(R.id.user)
-        val password: TextInputEditText = root.findViewById(R.id.password)
-        val devId: EditText = root.findViewById(R.id.dev_id)
-        val selectDate: EditText = root.findViewById(R.id.select_date)
-        selectDate.inputType = InputType.TYPE_NULL
+        controls = HomeControls(
+            root.findViewById(R.id.text_home),
+            root.findViewById(R.id.server_name),
+            root.findViewById(R.id.user),
+            root.findViewById(R.id.password),
+            root.findViewById(R.id.dev_id),
+            root.findViewById(R.id.select_date),
+        )
+        controls.selectDate.inputType = InputType.TYPE_NULL
 
-        selectDate.setOnClickListener {
-            setupPickerDialogs(selectDate, editable)
+        controls.selectDate.setOnClickListener {
+            setupPickerDialogs(controls.selectDate, editable)
         }
 
 
-        textView.text = getString(R.string.home_text)
-        serverText.text = editable.newEditable("rainbow.fis.agh.edu.pl/meteo/connection.php")
-        user.text = editable.newEditable("dustuser")
-        password.text = editable.newEditable("user@dust")
-        devId.text = editable.newEditable("13")
+        controls.textView.text = getString(R.string.home_text)
+        controls.serverText.text =
+            editable.newEditable("http://rainbow.fis.agh.edu.pl/meteo/connection.php")
+        controls.user.text = editable.newEditable("dustuser")
+        controls.password.text = editable.newEditable("user@dust")
+        controls.devId.text = editable.newEditable("11")
+        controls.selectDate.text = editable.newEditable("2020-12-20 00:00:00")
 
-        val mainActivity: MainActivity = activity as MainActivity
-        mainActivity.connectionConfig = ConnectionConfig(serverText.text.toString(), user.text.toString(), password.text.toString(), devId.text.toString().toInt(), selectDate.text.toString())
+        controls.textView.addTextChangedListener(afterTextChanged = changeListener())
+        controls.serverText.addTextChangedListener(afterTextChanged = changeListener())
+        controls.user.addTextChangedListener(afterTextChanged = changeListener())
+        controls.password.addTextChangedListener(afterTextChanged = changeListener())
+        controls.devId.addTextChangedListener(afterTextChanged = changeListener())
+        controls.selectDate.addTextChangedListener(afterTextChanged = changeListener())
+
+
 
         return root
     }
 
+
+    private fun changeListener() = { _: Editable? ->
+
+        mainActivity.connectionConfig.value = ConnectionConfig(
+            controls.serverText.text.toString(),
+            controls.user.text.toString(),
+            controls.password.text.toString(),
+            controls.devId.text.toString().toInt(),
+            controls.selectDate.text.toString()
+        )
+    }
+
     private fun setupPickerDialogs(
-            selectDate: EditText,
-            editable: Editable.Factory
+        selectDate: EditText,
+        editable: Editable.Factory
     ) {
         val calendar = Calendar.getInstance()
         val day = calendar.get(Calendar.DAY_OF_MONTH)

@@ -4,7 +4,7 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Map</string>
     <string name="home_text">This is your home page. Glad to see you! Please supply connection parameters.</string>
-    <string name="server_name">Server name:</string>
+    <string name="server_name">Server url:</string>
     <string name="user">Username</string>
     <string name="password">Passoword:</string>
     <string name="dev_id">dev_id:</string>

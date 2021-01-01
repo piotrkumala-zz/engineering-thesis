@@ -24,17 +24,21 @@ import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
 
+    private val model = DashboardViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.init(context)
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
-        val connectionConfig: ConnectionConfig = (activity as MainActivity).connectionConfig
+        val connectionConfig: ConnectionConfig = (activity as MainActivity).connectionConfig.value!!
+        model.loadDataFromServer(connectionConfig)
+
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val lineChart: LineChart = root.findViewById(R.id.lineChart)
 

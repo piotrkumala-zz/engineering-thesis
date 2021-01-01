@@ -1,11 +1,11 @@
 package com.example.myapplication.shared
 
 data class ConnectionConfig(
-    val serverName: String,
-    val userName: String,
+    val ServerName: String,
+    val UserName: String,
     val Password: String,
     val DevId: Int,
-    val measurementDate: String
+    val MeasurementDate: String
 ) {
     constructor() : this("", "", "", 0, "")
 }

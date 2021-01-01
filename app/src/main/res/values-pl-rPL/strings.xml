@@ -5,7 +5,7 @@
     <string name="title_dashboard">Wykresy</string>
     <string name="title_notifications">Mapa</string>
     <string name="home_text">Witamy na stronie głównej. Dobrze Cię widzieć! Wprowadź parametery połączenia.</string>
-    <string name="server_name">Nazwa serwera:</string>
+    <string name="server_name">Url serwera:</string>
     <string name="user">Nazwa użytkownika:</string>
     <string name="password">Hasło:</string>
     <string name="dev_id">dev_id:</string>
