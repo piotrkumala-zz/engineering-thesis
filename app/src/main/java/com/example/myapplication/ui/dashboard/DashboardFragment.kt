@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,10 +17,14 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class DashboardFragment : Fragment() {
@@ -37,34 +42,18 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val connectionConfig: ConnectionConfig = (activity as MainActivity).connectionConfig.value!!
-        model.loadDataFromServer(connectionConfig)
-
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val lineChart: LineChart = root.findViewById(R.id.lineChart)
-
-        //Part1
-        val entries = ArrayList<Entry>()
-
-//Part2
-        entries.add(Entry(1f, 10f))
-        entries.add(Entry(2f, 2f))
-        entries.add(Entry(3f, 7f))
-
-        val entries1 = ArrayList<Entry>()
-        entries1.add(Entry(3.5f, 0f))
-        entries1.add(Entry(4f, 20f))
-        entries1.add(Entry(5f, 16f))
-
         var newEntries: java.util.ArrayList<Entry>
+
         GlobalScope.launch(Dispatchers.IO) {
-            newEntries = prepareEntires(entries)
+            newEntries = prepareEntires(connectionConfig)
 
             val vl = LineDataSet(newEntries, "My Type")
-            val v2 = LineDataSet(entries1, "My Type")
 
             val legendEntries = ArrayList<LegendEntry>()
             val legendEntry = LegendEntry()
-            legendEntry.label = "My Type"
+            legendEntry.label = "PM25"
             legendEntry.formColor = vl.color
             legendEntries.add(legendEntry)
 
@@ -73,16 +62,10 @@ class DashboardFragment : Fragment() {
             vl.setDrawFilled(true)
             vl.lineWidth = 2f
 
-            v2.setDrawValues(true)
-            v2.setDrawFilled(true)
-            v2.lineWidth = 2f
 
 
-            lineChart.xAxis.labelRotationAngle = 0f
-
+            lineChart.xAxis.labelRotationAngle = 30f
             lineChart.data = LineData(vl)
-            lineChart.data.addDataSet(v2)
-
             lineChart.legend.setCustom(legendEntries)
 
             lineChart.axisRight.isEnabled = false
@@ -93,27 +76,52 @@ class DashboardFragment : Fragment() {
 
             lineChart.data
 
+            lineChart.xAxis.valueFormatter = object : ValueFormatter() {
+                @SuppressLint("SimpleDateFormat")
+                override fun getFormattedValue(value: Float): String {
+                    val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    val date = Date(value.toLong())
+                    return dateFormatter.format(date)
+                }
+            }
+
+
+
             lineChart.description.isEnabled = false
 
-//Part10
             if (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
-                lineChart.xAxis.axisLineColor = ContextCompat.getColor(requireContext(), R.color.white)
+                lineChart.xAxis.axisLineColor =
+                    ContextCompat.getColor(requireContext(), R.color.white)
                 lineChart.xAxis.gridColor = ContextCompat.getColor(requireContext(), R.color.white)
                 lineChart.xAxis.textColor = ContextCompat.getColor(requireContext(), R.color.white)
-                lineChart.axisLeft.axisLineColor = ContextCompat.getColor(requireContext(), R.color.white)
-                lineChart.axisLeft.gridColor = ContextCompat.getColor(requireContext(), R.color.white)
-                lineChart.axisLeft.textColor = ContextCompat.getColor(requireContext(), R.color.white)
+                lineChart.axisLeft.axisLineColor =
+                    ContextCompat.getColor(requireContext(), R.color.white)
+                lineChart.axisLeft.gridColor =
+                    ContextCompat.getColor(requireContext(), R.color.white)
+                lineChart.axisLeft.textColor =
+                    ContextCompat.getColor(requireContext(), R.color.white)
                 lineChart.legend.textColor = ContextCompat.getColor(requireContext(), R.color.white)
                 lineChart.data.dataSets.forEach { set ->
                     set.valueTextColor = ContextCompat.getColor(requireContext(), R.color.white)
                 }
             }
+            lineChart.notifyDataSetChanged()
+            lineChart.invalidate()
         }
         return root
     }
 
-    private fun prepareEntires(entries: ArrayList<Entry>): ArrayList<Entry> {
-        return entries
+    @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    @SuppressLint("SimpleDateFormat")
+    private suspend fun prepareEntires(connectionConfig: ConnectionConfig): ArrayList<Entry> {
+        val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val data = model.loadDataFromServer(connectionConfig)
+        return data.map { item ->
+            Entry(
+                dateFormatter.parse(item.DateTime).time.toFloat(),
+                item.PM25.toFloat()
+            )
+        } as ArrayList<Entry>
     }
 
 }
