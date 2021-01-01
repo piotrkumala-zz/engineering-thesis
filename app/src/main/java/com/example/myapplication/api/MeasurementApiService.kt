@@ -1,9 +1,12 @@
 package com.example.myapplication.api
 
+import com.example.myapplication.shared.Measurement
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -20,12 +23,16 @@ interface MeasurementApiService {
         @Header("Authorization") basicAuth: String,
         @Body dev_id: MultipartBody
     ):
-            Call<String>
+            Call<List<Measurement>>
 }
 
 object MeasurementApi {
+    private val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+
     private val retrofit: Retrofit = Retrofit.Builder()
-        .addConverterFactory(ScalarsConverterFactory.create())
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
         .baseUrl(BASE_URL)
         .build()
     val retrofitService: MeasurementApiService by lazy {

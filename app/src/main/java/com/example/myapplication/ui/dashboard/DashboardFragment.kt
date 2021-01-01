@@ -2,6 +2,7 @@ package com.example.myapplication.ui.dashboard
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.api.MeasurementApi
 import com.example.myapplication.shared.ConnectionConfig
+import com.example.myapplication.shared.Measurement
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LegendEntry
 import com.github.mikephil.charting.components.XAxis
@@ -31,7 +33,7 @@ import retrofit2.Response
 
 class DashboardFragment : Fragment() {
 
-    private val _response = MutableLiveData<String>()
+    private val _response = MutableLiveData<List<Measurement>>()
     private fun getMarsRealEstateProperties(connectionConfig: ConnectionConfig) {
         MeasurementApi.retrofitService.getProperties(
             connectionConfig.ServerName,
@@ -40,13 +42,16 @@ class DashboardFragment : Fragment() {
                 .addFormDataPart("dev_id", connectionConfig.DevId.toString())
                 .addFormDataPart("datetime", connectionConfig.MeasurementDate).build(),
         ).enqueue(
-            object : Callback<String> {
-                override fun onResponse(call: Call<String>, response: Response<String>) {
+            object : Callback<List<Measurement>> {
+                override fun onResponse(
+                    call: Call<List<Measurement>>,
+                    response: Response<List<Measurement>>
+                ) {
                     _response.value = response.body()
                 }
 
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    _response.value = "Failure" + t.message
+                override fun onFailure(call: Call<List<Measurement>>, t: Throwable) {
+                    Log.d("Failure", t.message.toString())
                 }
             })
     }
