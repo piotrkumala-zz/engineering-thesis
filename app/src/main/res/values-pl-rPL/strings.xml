@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Data Explorer</string>
     <string name="title_home">Strona główna</string>
-    <string name="title_dashboard">Wykresy</string>
+    <string name="title_dashboard">Wykres</string>
     <string name="title_notifications">Mapa</string>
     <string name="home_text">Witamy na stronie głównej. Dobrze Cię widzieć! Wprowadź parametery połączenia.</string>
     <string name="server_name">Url serwera:</string>
@@ -10,4 +10,5 @@
     <string name="password">Hasło:</string>
     <string name="dev_id">dev_id:</string>
     <string name="measurement_date">Data pomiaru:</string>
+    <string name="interval_input_hint">Interwał czasowy do określania przerwy w pomiarch (sek):</string>
 </resources>

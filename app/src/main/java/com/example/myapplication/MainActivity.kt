@@ -7,12 +7,14 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.myapplication.shared.ChartConfig
 import com.example.myapplication.shared.ConnectionConfig
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
     var connectionConfig: MutableLiveData<ConnectionConfig> = MutableLiveData(ConnectionConfig())
+    var chartConfig: MutableLiveData<ChartConfig> = MutableLiveData(ChartConfig())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

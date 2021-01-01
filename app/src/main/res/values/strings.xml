@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Data Explorer</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_dashboard">Chart</string>
     <string name="title_notifications">Map</string>
     <string name="home_text">This is your home page. Glad to see you! Please supply connection parameters.</string>
     <string name="server_name">Server url:</string>
@@ -9,4 +9,5 @@
     <string name="password">Passoword:</string>
     <string name="dev_id">dev_id:</string>
     <string name="measurement_date">Measurement date:</string>
+    <string name="interval_input_hint">Time interval to estimate data gaps (sec):</string>
 </resources>

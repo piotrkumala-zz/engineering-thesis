@@ -33,4 +33,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="400dp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="104dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/interval"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/interval_input_hint"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

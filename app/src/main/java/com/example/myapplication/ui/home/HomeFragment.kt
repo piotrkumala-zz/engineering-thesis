@@ -62,7 +62,7 @@ class HomeFragment : Fragment() {
             controls.user.text = editable.newEditable("dustuser")
             controls.password.text = editable.newEditable("user@dust")
             controls.devId.text = editable.newEditable("11")
-            controls.selectDate.text = editable.newEditable("2020-12-20 00:00:00")
+            controls.selectDate.text = editable.newEditable("2020-12-20 10:00:00")
         }
 
         controls.textView.addTextChangedListener(afterTextChanged = changeListener())
