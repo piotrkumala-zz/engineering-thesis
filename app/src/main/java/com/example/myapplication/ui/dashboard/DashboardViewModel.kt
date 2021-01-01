@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.dashboard
 
 import android.util.Log
+import android.widget.ArrayAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import okhttp3.MultipartBody
 class DashboardViewModel : ViewModel() {
 
     val data = MutableLiveData<List<Measurement>>()
+    lateinit var adapter: ArrayAdapter<CharSequence>
 
     suspend fun loadDataFromServer(connectionConfig: ConnectionConfig): List<Measurement> {
         withContext(viewModelScope.coroutineContext) {
