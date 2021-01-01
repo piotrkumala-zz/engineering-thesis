@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.example.myapplication.MainActivity
 import com.example.myapplication.R
-import com.example.myapplication.api.MarsApi
+import com.example.myapplication.api.MeasurementApi
 import com.example.myapplication.shared.ConnectionConfig
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LegendEntry
@@ -22,6 +22,8 @@ import com.github.mikephil.charting.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.Credentials
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,8 +32,14 @@ import retrofit2.Response
 class DashboardFragment : Fragment() {
 
     private val _response = MutableLiveData<String>()
-    private fun getMarsRealEstateProperties() {
-        MarsApi.retrofitService.getProperties().enqueue(
+    private fun getMarsRealEstateProperties(connectionConfig: ConnectionConfig) {
+        MeasurementApi.retrofitService.getProperties(
+            connectionConfig.ServerName,
+            Credentials.basic(connectionConfig.UserName, connectionConfig.Password),
+            MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("dev_id", connectionConfig.DevId.toString())
+                .addFormDataPart("datetime", connectionConfig.MeasurementDate).build(),
+        ).enqueue(
             object : Callback<String> {
                 override fun onResponse(call: Call<String>, response: Response<String>) {
                     _response.value = response.body()
@@ -53,8 +61,8 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val connectionConfig: ConnectionConfig = (activity as MainActivity).connectionConfig
-        getMarsRealEstateProperties()
+        val connectionConfig: ConnectionConfig = (activity as MainActivity).connectionConfig.value!!
+        getMarsRealEstateProperties(connectionConfig)
 
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val lineChart: LineChart = root.findViewById(R.id.lineChart)

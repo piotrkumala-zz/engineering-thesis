@@ -72,7 +72,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="201dp">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/dev_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="201dp">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/select_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
