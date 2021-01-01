@@ -4,7 +4,6 @@ import com.example.myapplication.shared.Measurement
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.MultipartBody
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
@@ -18,12 +17,12 @@ private const val BASE_URL =
 
 interface MeasurementApiService {
     @POST
-    fun getProperties(
+    suspend fun getProperties(
         @Url url: String,
         @Header("Authorization") basicAuth: String,
         @Body dev_id: MultipartBody
     ):
-            Call<List<Measurement>>
+            List<Measurement>
 }
 
 object MeasurementApi {

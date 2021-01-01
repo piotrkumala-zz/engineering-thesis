@@ -2,18 +2,14 @@ package com.example.myapplication.ui.dashboard
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import com.example.myapplication.MainActivity
 import com.example.myapplication.R
-import com.example.myapplication.api.MeasurementApi
 import com.example.myapplication.shared.ConnectionConfig
-import com.example.myapplication.shared.Measurement
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LegendEntry
 import com.github.mikephil.charting.components.XAxis
@@ -24,37 +20,11 @@ import com.github.mikephil.charting.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.Credentials
-import okhttp3.MultipartBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 class DashboardFragment : Fragment() {
 
-    private val _response = MutableLiveData<List<Measurement>>()
-    private fun getMarsRealEstateProperties(connectionConfig: ConnectionConfig) {
-        MeasurementApi.retrofitService.getProperties(
-            connectionConfig.ServerName,
-            Credentials.basic(connectionConfig.UserName, connectionConfig.Password),
-            MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("dev_id", connectionConfig.DevId.toString())
-                .addFormDataPart("datetime", connectionConfig.MeasurementDate).build(),
-        ).enqueue(
-            object : Callback<List<Measurement>> {
-                override fun onResponse(
-                    call: Call<List<Measurement>>,
-                    response: Response<List<Measurement>>
-                ) {
-                    _response.value = response.body()
-                }
-
-                override fun onFailure(call: Call<List<Measurement>>, t: Throwable) {
-                    Log.d("Failure", t.message.toString())
-                }
-            })
-    }
+    private val model = DashboardViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +37,7 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val connectionConfig: ConnectionConfig = (activity as MainActivity).connectionConfig.value!!
-        getMarsRealEstateProperties(connectionConfig)
+        model.loadDataFromServer(connectionConfig)
 
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val lineChart: LineChart = root.findViewById(R.id.lineChart)
