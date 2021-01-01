@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="measure_variable_array">
+        <item>PM1</item>
+        <item>PM25</item>
+        <item>PM10</item>
+        <item>Temperature</item>
+        <item>Relative humidity</item>
+        <item>Atmospheric pressure</item>
+    </string-array>
+</resources>

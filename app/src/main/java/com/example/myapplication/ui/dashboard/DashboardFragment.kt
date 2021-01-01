@@ -7,6 +7,9 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -55,32 +58,51 @@ class DashboardFragment : Fragment() {
         val chartConfig: ChartConfig = mainActivity.chartConfig.value!!
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         initControls(root, chartConfig)
-
-        renderChart(connectionConfig, controls.lineChart)
+        renderChart(connectionConfig, chartConfig, controls.lineChart)
         return root
     }
 
     private fun initControls(root: View, chartConfig: ChartConfig) {
-        controls = DashboardControls(root.findViewById(R.id.interval), root.findViewById(R.id.lineChart))
+        controls = DashboardControls(root.findViewById(R.id.interval), root.findViewById(R.id.lineChart), root.findViewById(R.id.spinner))
+        model.adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.measure_variable_array,
+                android.R.layout.simple_spinner_item
+        )
+
+        model.adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        controls.spinner.adapter = model.adapter
 
         if (chartConfig != ChartConfig()) {
             controls.interval.text = editable.newEditable(chartConfig.TimeInterval.toString())
+            controls.spinner.setSelection(chartConfig.SpinnerSelection)
         }
 
         controls.interval.addTextChangedListener(afterTextChanged = changeListener())
+
+        controls.spinner.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                mainActivity.chartConfig.value = ChartConfig(
+                        if (controls.interval.text.toString().isNotBlank()) controls.interval.text.toString().toInt() else 0,
+                        position
+                )
+                renderChart(mainActivity.connectionConfig.value!!, mainActivity.chartConfig.value!!, controls.lineChart)
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>?) {
+            }
+        }
     }
 
-    private fun renderChart(connectionConfig: ConnectionConfig, lineChart: LineChart) {
+    private fun renderChart(connectionConfig: ConnectionConfig, chartConfig: ChartConfig, lineChart: LineChart) {
         GlobalScope.launch(Dispatchers.IO) {
-            val newEntries = prepareEntires(connectionConfig)
-
-            val chartConfig = mainActivity.chartConfig.value!!
+            val newEntries = prepareEntires(connectionConfig, chartConfig)
             val lineDataSets: Vector<LineDataSet> = getLineSets(newEntries, chartConfig)
 //            val vl = LineDataSet(newEntries, "My Type")
 
             val legendEntries = ArrayList<LegendEntry>()
             val legendEntry = LegendEntry()
-            legendEntry.label = "PM25"
+            legendEntry.label = model.adapter.getItem(chartConfig.SpinnerSelection).toString()
             legendEntry.formColor = lineDataSets.firstElement().color
             legendEntries.add(legendEntry)
 
@@ -100,7 +122,6 @@ class DashboardFragment : Fragment() {
 
             lineChart.setTouchEnabled(true)
             lineChart.setPinchZoom(true)
-
             lineChart.data
 
             lineChart.xAxis.valueFormatter = object : ValueFormatter() {
@@ -112,8 +133,6 @@ class DashboardFragment : Fragment() {
                     return dateFormatter.format(date)
                 }
             }
-
-
 
             lineChart.description.isEnabled = false
 
@@ -163,7 +182,7 @@ class DashboardFragment : Fragment() {
 
     @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "UNCHECKED_CAST")
     @SuppressLint("SimpleDateFormat")
-    private suspend fun prepareEntires(connectionConfig: ConnectionConfig): ArrayList<Entry> {
+    private suspend fun prepareEntires(connectionConfig: ConnectionConfig, chartConfig: ChartConfig): ArrayList<Entry> {
         val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val data = model.loadDataFromServer(connectionConfig)
         return data.map { item ->
@@ -171,7 +190,15 @@ class DashboardFragment : Fragment() {
                 val date = dateFormatter.parse(item.DateTime)
                 Entry(
                         (date.time - dateFormatter.parse(connectionConfig.MeasurementDate).time).toFloat(),
-                        item.PM25.toFloat()
+                        when (chartConfig.SpinnerSelection) {
+                            0 -> item.PM1.toFloat()
+                            1 -> item.PM25.toFloat()
+                            2 -> item.PM10.toFloat()
+                            3 -> item.Temperature.toFloat()
+                            4 -> item.RelativeHumidity.toFloat()
+                            5 -> item.AtmosphericPressure.toFloat()
+                            else -> item.PM1.toFloat()
+                        }
                 )
             }
 
@@ -180,12 +207,14 @@ class DashboardFragment : Fragment() {
 
     private fun changeListener() = { _: Editable? ->
 
-        if (!controls.interval.text.isNullOrBlank())
+        if (!controls.interval.text.isNullOrBlank()) {
             mainActivity.chartConfig.value = ChartConfig(
-                    controls.interval.text.toString().toInt()
+                    controls.interval.text.toString().toInt(),
+                    controls.spinner.selectedItemPosition
             )
-        else
-            mainActivity.chartConfig.value = ChartConfig(0)
+            renderChart(mainActivity.connectionConfig.value!!, mainActivity.chartConfig.value!!, controls.lineChart)
+        } else
+            mainActivity.chartConfig.value = ChartConfig(0, 0)
     }
 
 }
