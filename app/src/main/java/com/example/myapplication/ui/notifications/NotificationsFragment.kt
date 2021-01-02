@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.notifications
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import java.net.URISyntaxException
 class NotificationsFragment : Fragment(), OnMapReadyCallback {
 
     private var mapView: MapView? = null
+    private val model = NotificationsViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,12 +32,10 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
 
-        context?.let {
             Mapbox.getInstance(
-                it.applicationContext,
-                "sk.eyJ1IjoicGt1bWFsYSIsImEiOiJja2lxcXJ6Z2IxemR4MzFxajF2bnR4b3lhIn0.qQn49nZHf9mpumWKM9CqqQ"
+                    requireContext(),
+                    getString(R.string.access_token)
             )
-        }
 
 // This contains the MapView in XML and needs to be called after the access token is configured.
         val root = inflater.inflate(R.layout.fragment_notifications, container, false)
@@ -47,13 +47,13 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(mapboxMap: MapboxMap) {
-        mapboxMap.setStyle(Style.SATELLITE) { style ->
+        mapboxMap.setStyle(if (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) Style.DARK else Style.LIGHT) { style ->
             try {
                 // Add the marathon route source to the map
                 // Create a GeoJsonSource and use the Mapbox Datasets API to retrieve the GeoJSON data
                 // More info about the Datasets API at https://www.mapbox.com/api-documentation/#retrieve-a-dataset
                 val courseRouteGeoJson = GeoJsonSource(
-                    "coursedata", URI("asset://marathon_route.geojson")
+                        "coursedata", URI("asset://marathon_route.geojson")
                 )
                 style.addSource(courseRouteGeoJson)
 
