@@ -6,9 +6,10 @@
     <string name="home_text">This is your home page. Glad to see you! Please supply connection parameters.</string>
     <string name="server_name">Server url:</string>
     <string name="user">Username</string>
-    <string name="password">Passoword:</string>
+    <string name="password">Password:</string>
     <string name="dev_id">dev_id:</string>
     <string name="measurement_date">Measurement date:</string>
     <string name="interval_input_hint">Time interval to estimate data gaps (sec):</string>
     <string name="spinner_hint">Value displayed on the chart:</string>
+    <string name="access_token" translatable="false">sk.eyJ1IjoicGt1bWFsYSIsImEiOiJja2lxcXJ6Z2IxemR4MzFxajF2bnR4b3lhIn0.qQn49nZHf9mpumWKM9CqqQ</string>
 </resources>
