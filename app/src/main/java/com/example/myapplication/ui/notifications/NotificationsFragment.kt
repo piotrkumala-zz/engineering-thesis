@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.notifications
 
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +19,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.style.expressions.Expression.get
+import com.mapbox.mapboxsdk.style.expressions.Expression.*
 import com.mapbox.mapboxsdk.style.layers.FillExtrusionLayer
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
@@ -61,24 +60,24 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
         var data: List<Measurement>
         GlobalScope.launch(Dispatchers.Main) {
             data = model.loadDataFromServer(mainActivity.connectionConfig.value!!)
-            val routeCoordinates: ArrayList<Point> = data.map { item -> run { Point.fromLngLat(item.Longitude, item.Latitude, item.Altitude) } } as ArrayList<Point>
             mapboxMap.setStyle(if (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) Style.DARK else Style.LIGHT) { style ->
 
 
                 try {
 
                     val features = Vector<Feature>()
-                    for (item in routeCoordinates) {
+                    for (item in data) {
                         val json = JsonObject()
-                        json.addProperty("e", item.altitude())
+                        json.addProperty("height", item.Altitude)
+                        json.addProperty("color", item.PM25)
 
                         features.addElement(Feature.fromGeometry(
                                 Polygon.fromLngLats((mutableListOf(mutableListOf(
-                                        Point.fromLngLat(item.longitude(), item.latitude()),
-                                        Point.fromLngLat(item.longitude(), item.latitude() + 0.0001),
-                                        Point.fromLngLat(item.longitude() + 0.0001, item.latitude() + 0.0001),
-                                        Point.fromLngLat(item.longitude() + 0.0001, item.latitude()),
-                                        Point.fromLngLat(item.longitude(), item.latitude()),
+                                        Point.fromLngLat(item.Longitude, item.Latitude),
+                                        Point.fromLngLat(item.Longitude, item.Latitude + 0.0001),
+                                        Point.fromLngLat(item.Longitude + 0.0001, item.Latitude + 0.0001),
+                                        Point.fromLngLat(item.Longitude + 0.0001, item.Latitude),
+                                        Point.fromLngLat(item.Longitude, item.Latitude),
                                 )))),
                                 json
                         ))
@@ -90,9 +89,13 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
 //                 Add FillExtrusion layer to map using GeoJSON data
                     style.addLayer(
                             FillExtrusionLayer("course", "courseData").withProperties(
-                                    fillExtrusionColor(Color.YELLOW),
+                                    fillExtrusionColor(interpolate(linear(),
+                                            get("color"),
+                                            stop(89, rgb(0, 255, 0)),
+                                            stop(90, rgb(255, 0, 0))
+                                    )),
                                     fillExtrusionOpacity(0.7f),
-                                    fillExtrusionHeight(get("e"))
+                                    fillExtrusionHeight(get("height"))
                             )
                     )
                 } catch (exception: URISyntaxException) {
