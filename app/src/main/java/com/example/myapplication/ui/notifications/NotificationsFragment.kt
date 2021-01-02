@@ -10,7 +10,11 @@ import androidx.fragment.app.Fragment
 import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.shared.Measurement
+import com.google.gson.JsonObject
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
+import com.mapbox.geojson.Polygon
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -23,8 +27,8 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.net.URI
 import java.net.URISyntaxException
+import java.util.*
 
 
 class NotificationsFragment : Fragment(), OnMapReadyCallback {
@@ -34,9 +38,9 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mainActivity: MainActivity
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
 
             Mapbox.getInstance(
@@ -62,18 +66,30 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
 
 
                 try {
-                    // Add the marathon route source to the map
-                    // Create a GeoJsonSource and use the Mapbox Datasets API to retrieve the GeoJSON data
-                    // More info about the Datasets API at https://www.mapbox.com/api-documentation/#retrieve-a-dataset
-                    val courseRouteGeoJson = GeoJsonSource(
-                            "coursedata", URI("asset://marathon_route.geojson")
-                    )
 
-                    style.addSource(courseRouteGeoJson)
+                    val features = Vector<Feature>()
+                    for (item in routeCoordinates) {
+                        val json = JsonObject()
+                        json.addProperty("e", item.altitude())
+
+                        features.addElement(Feature.fromGeometry(
+                                Polygon.fromLngLats((mutableListOf(mutableListOf(
+                                        Point.fromLngLat(item.longitude(), item.latitude()),
+                                        Point.fromLngLat(item.longitude(), item.latitude() + 0.0001),
+                                        Point.fromLngLat(item.longitude() + 0.0001, item.latitude() + 0.0001),
+                                        Point.fromLngLat(item.longitude() + 0.0001, item.latitude()),
+                                        Point.fromLngLat(item.longitude(), item.latitude()),
+                                )))),
+                                json
+                        ))
+
+                    }
+
+                    style.addSource(GeoJsonSource("courseData", FeatureCollection.fromFeatures(features)))
 
 //                 Add FillExtrusion layer to map using GeoJSON data
                     style.addLayer(
-                            FillExtrusionLayer("course", "coursedata").withProperties(
+                            FillExtrusionLayer("course", "courseData").withProperties(
                                     fillExtrusionColor(Color.YELLOW),
                                     fillExtrusionOpacity(0.7f),
                                     fillExtrusionHeight(get("e"))
