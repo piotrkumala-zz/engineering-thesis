@@ -2,6 +2,7 @@ package com.example.myapplication.ui.mapSettings
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.widget.ArrayAdapter
@@ -13,6 +14,27 @@ import com.example.myapplication.shared.MapConfig
 import com.google.android.material.textfield.TextInputEditText
 
 class MapSettings : DialogFragment() {
+
+
+    private lateinit var listener: NoticeDialogListener
+
+    interface NoticeDialogListener {
+        fun onDialogPositiveClick(dialog: DialogFragment)
+        fun onDialogNegativeClick(dialog: DialogFragment)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            listener = parentFragment as NoticeDialogListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException(
+                (context.toString() +
+                        " must implement NoticeDialogListener")
+            )
+        }
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
@@ -48,6 +70,7 @@ class MapSettings : DialogFragment() {
                         selected,
                         if (number.toString().isNotBlank()) number.toString().toInt() else 0
                     )
+                    listener.onDialogPositiveClick(this)
 
                 }
                 .setNegativeButton(
