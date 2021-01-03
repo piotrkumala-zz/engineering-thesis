@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.shared.Measurement
+import com.example.myapplication.ui.mapSettings.MapSettings
 import com.google.gson.JsonObject
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
@@ -43,8 +44,8 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
     ): View? {
 
             Mapbox.getInstance(
-                    requireContext(),
-                    getString(R.string.access_token)
+                requireContext(),
+                getString(R.string.access_token)
             )
 
 // This contains the MapView in XML and needs to be called after the access token is configured.
@@ -53,6 +54,11 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
         mapView?.onCreate(savedInstanceState)
         mapView?.getMapAsync(this)
         mainActivity = activity as MainActivity
+        val fab: View = root.findViewById(R.id.floatingActionButton)
+        fab.setOnClickListener { view ->
+            val newDialog = MapSettings()
+            newDialog.show(childFragmentManager, "test")
+        }
         return root
     }
 
@@ -71,32 +77,56 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
                         json.addProperty("height", item.Altitude)
                         json.addProperty("color", item.PM25)
 
-                        features.addElement(Feature.fromGeometry(
-                                Polygon.fromLngLats((mutableListOf(mutableListOf(
-                                        Point.fromLngLat(item.Longitude, item.Latitude),
-                                        Point.fromLngLat(item.Longitude, item.Latitude + 0.0001),
-                                        Point.fromLngLat(item.Longitude + 0.0001, item.Latitude + 0.0001),
-                                        Point.fromLngLat(item.Longitude + 0.0001, item.Latitude),
-                                        Point.fromLngLat(item.Longitude, item.Latitude),
-                                )))),
+                        features.addElement(
+                            Feature.fromGeometry(
+                                Polygon.fromLngLats(
+                                    (mutableListOf(
+                                        mutableListOf(
+                                            Point.fromLngLat(item.Longitude, item.Latitude),
+                                            Point.fromLngLat(
+                                                item.Longitude,
+                                                item.Latitude + 0.0001
+                                            ),
+                                            Point.fromLngLat(
+                                                item.Longitude + 0.0001,
+                                                item.Latitude + 0.0001
+                                            ),
+                                            Point.fromLngLat(
+                                                item.Longitude + 0.0001,
+                                                item.Latitude
+                                            ),
+                                            Point.fromLngLat(item.Longitude, item.Latitude),
+                                        )
+                                    ))
+                                ),
                                 json
-                        ))
+                            )
+                        )
 
                     }
 
-                    style.addSource(GeoJsonSource("courseData", FeatureCollection.fromFeatures(features)))
+                    style.addSource(
+                        GeoJsonSource(
+                            "courseData", FeatureCollection.fromFeatures(
+                                features
+                            )
+                        )
+                    )
 
 //                 Add FillExtrusion layer to map using GeoJSON data
                     style.addLayer(
-                            FillExtrusionLayer("course", "courseData").withProperties(
-                                    fillExtrusionColor(interpolate(linear(),
-                                            get("color"),
-                                            stop(89, rgb(0, 255, 0)),
-                                            stop(90, rgb(255, 0, 0))
-                                    )),
-                                    fillExtrusionOpacity(0.7f),
-                                    fillExtrusionHeight(get("height"))
-                            )
+                        FillExtrusionLayer("course", "courseData").withProperties(
+                            fillExtrusionColor(
+                                interpolate(
+                                    linear(),
+                                    get("color"),
+                                    stop(89, rgb(0, 255, 0)),
+                                    stop(90, rgb(255, 0, 0))
+                                )
+                            ),
+                            fillExtrusionOpacity(0.7f),
+                            fillExtrusionHeight(get("height"))
+                        )
                     )
                 } catch (exception: URISyntaxException) {
 

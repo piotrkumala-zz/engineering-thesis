@@ -37,7 +37,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="410dp"
+        android:layout_marginTop="460dp"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="104dp">
 
@@ -53,7 +53,7 @@
         android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="520dp"
+        android:layout_marginTop="430dp"
         android:prompt="@string/server_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -64,7 +64,8 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="490dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="410dp"
         android:text="@string/spinner_hint"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="182dp" />
