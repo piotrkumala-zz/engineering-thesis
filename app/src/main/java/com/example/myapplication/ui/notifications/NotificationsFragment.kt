@@ -18,6 +18,8 @@ import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.Polygon
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
@@ -72,6 +74,13 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback, MapSettings.Notice
         var data: List<Measurement>
         GlobalScope.launch(Dispatchers.Main) {
             data = model.loadDataFromServer(mainActivity.connectionConfig.value!!)
+            mapboxMap.cameraPosition =
+                CameraPosition.Builder().target(LatLng(
+                    data.sortedBy { it.Latitude }.map { it.Latitude }
+                        .let { (it[it.size / 2] + it[(it.size - 1) / 2]) / 2 },
+                    data.sortedBy { it.Longitude }.map { it.Longitude }
+                        .let { (it[it.size / 2] + it[(it.size - 1) / 2]) / 2 }
+                )).build()
             mapboxMap.setStyle(if (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) Style.DARK else Style.LIGHT) { style ->
 
 
