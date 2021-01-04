@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.dashboard
+package com.example.myapplication.ui.chart
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
@@ -36,9 +36,9 @@ import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 
-class DashboardFragment : Fragment() {
+class ChartFragment : Fragment() {
 
-    private val model = DashboardViewModel()
+    private val model = ChartViewModel()
     private lateinit var mainActivity: MainActivity
     private lateinit var controls: DashboardControls
     private val editable: Editable.Factory = Editable.Factory.getInstance()
@@ -56,7 +56,7 @@ class DashboardFragment : Fragment() {
         mainActivity = activity as MainActivity
         val connectionConfig: ConnectionConfig = mainActivity.connectionConfig.value!!
         val chartConfig: ChartConfig = mainActivity.chartConfig.value!!
-        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        val root = inflater.inflate(R.layout.fragment_chart, container, false)
         initControls(root, chartConfig)
         renderChart(connectionConfig, chartConfig, controls.lineChart)
         return root

@@ -13,7 +13,7 @@ import com.example.myapplication.R
 import com.example.myapplication.shared.MapConfig
 import com.google.android.material.textfield.TextInputEditText
 
-class MapSettings : DialogFragment() {
+class MapSettingsFragment : DialogFragment() {
 
 
     private lateinit var listener: NoticeDialogListener

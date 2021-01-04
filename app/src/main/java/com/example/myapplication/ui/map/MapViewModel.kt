@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.notifications
+package com.example.myapplication.ui.map
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.Credentials
 import okhttp3.MultipartBody
 
-class NotificationsViewModel : ViewModel() {
+class MapViewModel : ViewModel() {
 
     val data = MutableLiveData<List<Measurement>>()
 

@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.dashboard
+package com.example.myapplication.ui.chart
 
 import android.util.Log
 import android.widget.ArrayAdapter
@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.Credentials
 import okhttp3.MultipartBody
 
-class DashboardViewModel : ViewModel() {
+class ChartViewModel : ViewModel() {
 
     val data = MutableLiveData<List<Measurement>>()
     lateinit var adapter: ArrayAdapter<CharSequence>
@@ -21,12 +21,12 @@ class DashboardViewModel : ViewModel() {
         withContext(viewModelScope.coroutineContext) {
             try {
                 val listResult = MeasurementApi.retrofitService.getProperties(
-                    connectionConfig.ServerName,
-                    Credentials.basic(connectionConfig.UserName, connectionConfig.Password),
-                    MultipartBody.Builder().setType(MultipartBody.FORM)
-                        .addFormDataPart("dev_id", connectionConfig.DevId.toString())
-                        .addFormDataPart("datetime", connectionConfig.MeasurementDate.split(' ')[0])
-                        .build(),
+                        connectionConfig.ServerName,
+                        Credentials.basic(connectionConfig.UserName, connectionConfig.Password),
+                        MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("dev_id", connectionConfig.DevId.toString())
+                                .addFormDataPart("datetime", connectionConfig.MeasurementDate.split(' ')[0])
+                                .build(),
                 )
                 data.value = listResult
             } catch (e: Exception) {

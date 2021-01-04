@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.notifications
+package com.example.myapplication.ui.map
 
 import android.content.res.Configuration
 import android.graphics.Color
@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.shared.Measurement
-import com.example.myapplication.ui.mapSettings.MapSettings
+import com.example.myapplication.ui.mapSettings.MapSettingsFragment
 import com.google.gson.JsonObject
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
@@ -35,10 +35,10 @@ import java.net.URISyntaxException
 import java.util.*
 
 
-class NotificationsFragment : Fragment(), OnMapReadyCallback, MapSettings.NoticeDialogListener {
+class MapFragment : Fragment(), OnMapReadyCallback, MapSettingsFragment.NoticeDialogListener {
 
     private var mapView: MapView? = null
-    private val model = NotificationsViewModel()
+    private val model = MapViewModel()
     private lateinit var mainActivity: MainActivity
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
@@ -57,14 +57,14 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback, MapSettings.Notice
             getString(R.string.access_token)
         )
 
-        val root = inflater.inflate(R.layout.fragment_notifications, container, false)
+        val root = inflater.inflate(R.layout.fragment_map, container, false)
         mapView = root.findViewById(R.id.mapView)
         mapView?.onCreate(savedInstanceState)
         mapView?.getMapAsync(this)
         mainActivity = activity as MainActivity
         val fab: View = root.findViewById(R.id.floatingActionButton)
         fab.setOnClickListener {
-            val newDialog = MapSettings()
+            val newDialog = MapSettingsFragment()
             newDialog.show(childFragmentManager, "test")
         }
         return root
