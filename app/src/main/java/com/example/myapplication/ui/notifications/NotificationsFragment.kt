@@ -1,20 +1,25 @@
 package com.example.myapplication.ui.notifications
 
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.shared.Measurement
+import com.example.myapplication.ui.mapSettings.MapSettings
 import com.google.gson.JsonObject
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.Polygon
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
@@ -30,29 +35,38 @@ import java.net.URISyntaxException
 import java.util.*
 
 
-class NotificationsFragment : Fragment(), OnMapReadyCallback {
+class NotificationsFragment : Fragment(), OnMapReadyCallback, MapSettings.NoticeDialogListener {
 
     private var mapView: MapView? = null
     private val model = NotificationsViewModel()
     private lateinit var mainActivity: MainActivity
 
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        mapView?.getMapAsync(this)
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {}
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
 
-            Mapbox.getInstance(
-                    requireContext(),
-                    getString(R.string.access_token)
-            )
+        Mapbox.getInstance(
+            requireContext(),
+            getString(R.string.access_token)
+        )
 
-// This contains the MapView in XML and needs to be called after the access token is configured.
         val root = inflater.inflate(R.layout.fragment_notifications, container, false)
         mapView = root.findViewById(R.id.mapView)
         mapView?.onCreate(savedInstanceState)
         mapView?.getMapAsync(this)
         mainActivity = activity as MainActivity
+        val fab: View = root.findViewById(R.id.floatingActionButton)
+        fab.setOnClickListener {
+            val newDialog = MapSettings()
+            newDialog.show(childFragmentManager, "test")
+        }
         return root
     }
 
@@ -60,6 +74,13 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
         var data: List<Measurement>
         GlobalScope.launch(Dispatchers.Main) {
             data = model.loadDataFromServer(mainActivity.connectionConfig.value!!)
+            mapboxMap.cameraPosition =
+                CameraPosition.Builder().target(LatLng(
+                    data.sortedBy { it.Latitude }.map { it.Latitude }
+                        .let { (it[it.size / 2] + it[(it.size - 1) / 2]) / 2 },
+                    data.sortedBy { it.Longitude }.map { it.Longitude }
+                        .let { (it[it.size / 2] + it[(it.size - 1) / 2]) / 2 }
+                )).build()
             mapboxMap.setStyle(if (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) Style.DARK else Style.LIGHT) { style ->
 
 
@@ -69,34 +90,70 @@ class NotificationsFragment : Fragment(), OnMapReadyCallback {
                     for (item in data) {
                         val json = JsonObject()
                         json.addProperty("height", item.Altitude)
-                        json.addProperty("color", item.PM25)
+                        json.addProperty(
+                            "color", when (mainActivity.mapConfig.value?.SpinnerSelection) {
+                                0 -> item.PM1
+                                1 -> item.PM25
+                                2 -> item.PM10
+                                3 -> item.Temperature
+                                4 -> item.RelativeHumidity
+                                5 -> item.AtmosphericPressure
+                                else -> item.PM1
+                            }
+                        )
 
-                        features.addElement(Feature.fromGeometry(
-                                Polygon.fromLngLats((mutableListOf(mutableListOf(
-                                        Point.fromLngLat(item.Longitude, item.Latitude),
-                                        Point.fromLngLat(item.Longitude, item.Latitude + 0.0001),
-                                        Point.fromLngLat(item.Longitude + 0.0001, item.Latitude + 0.0001),
-                                        Point.fromLngLat(item.Longitude + 0.0001, item.Latitude),
-                                        Point.fromLngLat(item.Longitude, item.Latitude),
-                                )))),
+                        features.addElement(
+                            Feature.fromGeometry(
+                                Polygon.fromLngLats(
+                                    (mutableListOf(
+                                        mutableListOf(
+                                            Point.fromLngLat(item.Longitude, item.Latitude),
+                                            Point.fromLngLat(
+                                                item.Longitude,
+                                                item.Latitude + 0.0001
+                                            ),
+                                            Point.fromLngLat(
+                                                item.Longitude + 0.0001,
+                                                item.Latitude + 0.0001
+                                            ),
+                                            Point.fromLngLat(
+                                                item.Longitude + 0.0001,
+                                                item.Latitude
+                                            ),
+                                            Point.fromLngLat(item.Longitude, item.Latitude),
+                                        )
+                                    ))
+                                ),
                                 json
-                        ))
+                            )
+                        )
 
                     }
 
-                    style.addSource(GeoJsonSource("courseData", FeatureCollection.fromFeatures(features)))
+                    style.addSource(
+                        GeoJsonSource(
+                            "courseData", FeatureCollection.fromFeatures(
+                                features
+                            )
+                        )
+                    )
 
 //                 Add FillExtrusion layer to map using GeoJSON data
+                    val test =
+                        if (mainActivity.mapConfig.value!!.ColorBreakpoint != 0) mainActivity.mapConfig.value!!.ColorBreakpoint else 90
                     style.addLayer(
-                            FillExtrusionLayer("course", "courseData").withProperties(
-                                    fillExtrusionColor(interpolate(linear(),
-                                            get("color"),
-                                            stop(89, rgb(0, 255, 0)),
-                                            stop(90, rgb(255, 0, 0))
-                                    )),
-                                    fillExtrusionOpacity(0.7f),
-                                    fillExtrusionHeight(get("height"))
-                            )
+                        FillExtrusionLayer("course", "courseData").withProperties(
+                            fillExtrusionColor(
+                                interpolate(
+                                    linear(),
+                                    get("color"),
+                                    stop(test - 1, color(Color.GREEN)),
+                                    stop(test, color(Color.RED))
+                                )
+                            ),
+                            fillExtrusionOpacity(0.7f),
+                            fillExtrusionHeight(get("height"))
+                        )
                     )
                 } catch (exception: URISyntaxException) {
 
