@@ -25,8 +25,8 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.Utils
 import com.github.pkumala.engineeringThesis.MainActivity
 import com.github.pkumala.engineeringThesis.shared.ChartConfig
+import com.github.pkumala.engineeringThesis.shared.ChartControls
 import com.github.pkumala.engineeringThesis.shared.ConnectionConfig
-import com.github.pkumala.engineeringThesis.shared.DashboardControls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -40,7 +40,7 @@ class ChartFragment : Fragment() {
 
     private val model = ChartViewModel()
     private lateinit var mainActivity: MainActivity
-    private lateinit var controls: DashboardControls
+    private lateinit var controls: ChartControls
     private val editable: Editable.Factory = Editable.Factory.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,15 +63,15 @@ class ChartFragment : Fragment() {
     }
 
     private fun initControls(root: View, chartConfig: ChartConfig) {
-        controls = DashboardControls(
-            root.findViewById(R.id.interval),
-            root.findViewById(R.id.lineChart),
-            root.findViewById(R.id.spinner)
+        controls = ChartControls(
+                root.findViewById(R.id.interval),
+                root.findViewById(R.id.lineChart),
+                root.findViewById(R.id.spinner)
         )
         model.adapter = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.measure_variable_array,
-            android.R.layout.simple_spinner_item
+                requireContext(),
+                R.array.measure_variable_array,
+                android.R.layout.simple_spinner_item
         )
 
         model.adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
