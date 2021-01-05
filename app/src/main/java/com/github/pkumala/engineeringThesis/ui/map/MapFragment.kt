@@ -65,7 +65,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapSettingsFragment.NoticeDi
         val fab: View = root.findViewById(R.id.floatingActionButton)
         fab.setOnClickListener {
             val newDialog = MapSettingsFragment()
-            newDialog.show(childFragmentManager, "test")
+            newDialog.show(childFragmentManager, "dialog")
         }
         return root
     }
@@ -127,7 +127,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapSettingsFragment.NoticeDi
                                 json
                             )
                         )
-
                     }
 
                     style.addSource(
@@ -139,21 +138,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapSettingsFragment.NoticeDi
                     )
 
 //                 Add FillExtrusion layer to map using GeoJSON data
-                    val test =
-                        if (mainActivity.mapConfig.value!!.ColorBreakpoint != 0) mainActivity.mapConfig.value!!.ColorBreakpoint else 90
+                    val colorBreakpoint =
+                            if (mainActivity.mapConfig.value!!.ColorBreakpoint != 0) mainActivity.mapConfig.value!!.ColorBreakpoint else 90
                     style.addLayer(
-                        FillExtrusionLayer("course", "courseData").withProperties(
-                            fillExtrusionColor(
-                                interpolate(
-                                    linear(),
-                                    get("color"),
-                                    stop(test - 1, color(Color.GREEN)),
-                                    stop(test, color(Color.RED))
-                                )
-                            ),
-                            fillExtrusionOpacity(0.7f),
-                            fillExtrusionHeight(get("height"))
-                        )
+                            FillExtrusionLayer("course", "courseData").withProperties(
+                                    fillExtrusionColor(
+                                            interpolate(
+                                                    linear(),
+                                                    get("color"),
+                                                    stop(colorBreakpoint - 1, color(Color.GREEN)),
+                                                    stop(colorBreakpoint, color(Color.RED))
+                                            )
+                                    ),
+                                    fillExtrusionOpacity(0.7f),
+                                    fillExtrusionHeight(get("height"))
+                            )
                     )
                 } catch (exception: URISyntaxException) {
 
