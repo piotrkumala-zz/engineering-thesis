@@ -10,7 +10,7 @@
     <string name="password">Hasło:</string>
     <string name="dev_id">dev_id:</string>
     <string name="measurement_date">Data pomiaru:</string>
-    <string name="interval_input_hint">Interwał czasowy do określania przerwy w pomiarch (sek):</string>
+    <string name="interval_input_hint">Interwał czasowy do określania przerwy w pomiarach (sek):</string>
     <string name="spinner_hint">Wartość wyświetlana na wykresie:</string>
     <string name="settings">Ustawienia mapy</string>
     <string name="breakpoint_hint">Granica do zmiany koloru słupka:</string>
