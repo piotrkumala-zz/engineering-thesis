@@ -76,7 +76,7 @@ class MapSettingsFragment : DialogFragment() {
                 .setNegativeButton(
                     R.string.cancel
                 ) { _, _ ->
-                    listener.onDialogPositiveClick(this)
+                    listener.onDialogNegativeClick(this)
                     dialog?.cancel()
                 }
             builder.create()
