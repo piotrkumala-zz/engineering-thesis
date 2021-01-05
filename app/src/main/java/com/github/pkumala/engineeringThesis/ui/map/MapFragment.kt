@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.map
+package com.github.pkumala.engineeringThesis.ui.map
 
 import android.content.res.Configuration
 import android.graphics.Color
@@ -8,10 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import com.example.myapplication.MainActivity
-import com.example.myapplication.R
-import com.example.myapplication.shared.Measurement
-import com.example.myapplication.ui.mapSettings.MapSettingsFragment
+import com.github.engineeringThesis.R
+import com.github.pkumala.engineeringThesis.MainActivity
+import com.github.pkumala.engineeringThesis.shared.Measurement
+import com.github.pkumala.engineeringThesis.ui.mapSettings.MapSettingsFragment
 import com.google.gson.JsonObject
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection

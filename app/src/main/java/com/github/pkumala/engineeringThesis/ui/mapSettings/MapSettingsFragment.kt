@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.mapSettings
+package com.github.pkumala.engineeringThesis.ui.mapSettings
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -8,9 +8,9 @@ import android.text.Editable
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.fragment.app.DialogFragment
-import com.example.myapplication.MainActivity
-import com.example.myapplication.R
-import com.example.myapplication.shared.MapConfig
+import com.github.engineeringThesis.R
+import com.github.pkumala.engineeringThesis.MainActivity
+import com.github.pkumala.engineeringThesis.shared.MapConfig
 import com.google.android.material.textfield.TextInputEditText
 
 class MapSettingsFragment : DialogFragment() {

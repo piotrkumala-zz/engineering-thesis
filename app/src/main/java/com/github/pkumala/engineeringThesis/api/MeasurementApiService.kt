@@ -1,6 +1,6 @@
-package com.example.myapplication.api
+package com.github.pkumala.engineeringThesis.api
 
-import com.example.myapplication.shared.Measurement
+import com.github.pkumala.engineeringThesis.shared.Measurement
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.MultipartBody

@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.github.pkumala.engineeringThesis
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,9 +7,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.myapplication.shared.ChartConfig
-import com.example.myapplication.shared.ConnectionConfig
-import com.example.myapplication.shared.MapConfig
+import com.github.engineeringThesis.R
+import com.github.pkumala.engineeringThesis.shared.ChartConfig
+import com.github.pkumala.engineeringThesis.shared.ConnectionConfig
+import com.github.pkumala.engineeringThesis.shared.MapConfig
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {

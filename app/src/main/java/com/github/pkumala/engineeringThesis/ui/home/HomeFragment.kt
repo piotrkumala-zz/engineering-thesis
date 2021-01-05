@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.home
+package com.github.pkumala.engineeringThesis.ui.home
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -12,10 +12,10 @@ import android.widget.EditText
 import android.widget.TimePicker
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import com.example.myapplication.MainActivity
-import com.example.myapplication.R
-import com.example.myapplication.shared.ConnectionConfig
-import com.example.myapplication.shared.HomeControls
+import com.github.engineeringThesis.R
+import com.github.pkumala.engineeringThesis.MainActivity
+import com.github.pkumala.engineeringThesis.shared.ConnectionConfig
+import com.github.pkumala.engineeringThesis.shared.HomeControls
 import java.util.*
 
 class HomeFragment : Fragment() {

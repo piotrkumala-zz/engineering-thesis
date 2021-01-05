@@ -1,4 +1,4 @@
-package com.example.myapplication.shared
+package com.github.pkumala.engineeringThesis.shared
 
 import com.squareup.moshi.Json
 
